@@ -1,0 +1,19 @@
+{
+    "batch_size": 16,
+    "bert_model_name_or_path": "distilbert-base-uncased",
+    "data_dir": "./data",
+    "device": "cpu",
+    "gtid": "",
+    "lr": 5e-05,
+    "lr_scheduler_type": "linear",
+    "model_dir": "./model",
+    "n_ents": 6,
+    "n_epochs": 10,
+    "n_lbs": 13,
+    "name": "",
+    "no_cuda": false,
+    "no_mps": false,
+    "seed": 42,
+    "warmup_ratio": 0.1,
+    "weight_decay": 0.01
+}

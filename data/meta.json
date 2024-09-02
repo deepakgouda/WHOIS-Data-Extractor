@@ -1,0 +1,5 @@
+{
+    "entity_types": ["PREFIX", "ORGNAME", "COUNTRY", "ORGID", "NETTYPE", "CHANGED"],
+    "max_length": 124,
+    "num_labels": 13
+}
