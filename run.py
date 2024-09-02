@@ -7,7 +7,6 @@ from src.train import Trainer
 logger.add("logs/training_{time}.log", enqueue=True)
 
 
-
 def main():
     config = Config(logger)
 

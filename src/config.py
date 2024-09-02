@@ -11,9 +11,7 @@ class Config:
     """
 
     # --- manage directories and IO ---
-    data_dir: str = field(
-        default="./data", metadata={"help": "Directory to datasets"}
-    )
+    data_dir: str = field(default="./data", metadata={"help": "Directory to datasets"})
     model_dir: str = field(
         default="./model", metadata={"help": "Directory to model checkpoints"}
     )
@@ -94,4 +92,3 @@ class Config:
         if not osp.isfile(file_path):
             self._logger.error(f"Training file {file_path} does not exist!")
             raise FileNotFoundError(f"Training file {file_path} does not exist!")
-

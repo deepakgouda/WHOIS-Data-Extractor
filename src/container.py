@@ -44,7 +44,9 @@ class CheckpointContainer:
     a specified update criteria.
     """
 
-    def __init__(self, update_criteria: Optional[Union[str, UpdateCriteria]] = "always"):
+    def __init__(
+        self, update_criteria: Optional[Union[str, UpdateCriteria]] = "always"
+    ):
         """
         Initialize the checkpoint container.
 
@@ -63,7 +65,9 @@ class CheckpointContainer:
         self._criteria = update_criteria
 
         self._state_dict = None
-        self._metric = np.inf if self._criteria == UpdateCriteria.metric_smaller else -np.inf
+        self._metric = (
+            np.inf if self._criteria == UpdateCriteria.metric_smaller else -np.inf
+        )
 
     @property
     def state_dict(self):
@@ -79,7 +83,9 @@ class CheckpointContainer:
         """
         return self._metric
 
-    def check_and_update(self, model, metric: Optional[Union[int, float]] = None) -> bool:
+    def check_and_update(
+        self, model, metric: Optional[Union[int, float]] = None
+    ) -> bool:
         """
         Check if the new model is better than the buffered model.
 
@@ -97,8 +103,13 @@ class CheckpointContainer:
         """
         update_flag = (
             (self._criteria == UpdateCriteria.always)
-            or (self._criteria == UpdateCriteria.metric_smaller and metric <= self.metric)
-            or (self._criteria == UpdateCriteria.metric_larger and metric >= self.metric)
+            or (
+                self._criteria == UpdateCriteria.metric_smaller
+                and metric <= self.metric
+            )
+            or (
+                self._criteria == UpdateCriteria.metric_larger and metric >= self.metric
+            )
         )
 
         if update_flag:
@@ -150,7 +161,9 @@ class CheckpointContainer:
 
         for attr, value in model_dict.items():
             if attr not in self.__dict__:
-                logger.warning(f"Attribute {attr} is not natively defined in model buffer!")
+                logger.warning(
+                    f"Attribute {attr} is not natively defined in model buffer!"
+                )
             setattr(self, attr, value)
 
         return self

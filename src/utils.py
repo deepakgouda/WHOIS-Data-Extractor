@@ -1,10 +1,14 @@
 from typing import List, Dict, Tuple, Union, Optional
 
+
 def entity_to_bio_labels(entities: List[str]):
     bio_labels = ["O"] + ["%s-%s" % (bi, label) for label in entities for bi in "BI"]
     return bio_labels
 
-def span_list_to_dict(span_list: List[list]) -> Dict[Tuple[int, int], Union[str, tuple]]:
+
+def span_list_to_dict(
+    span_list: List[list],
+) -> Dict[Tuple[int, int], Union[str, tuple]]:
     """
     convert entity label span list to span dictionaries
 
@@ -21,7 +25,10 @@ def span_list_to_dict(span_list: List[list]) -> Dict[Tuple[int, int], Union[str,
         span_dict[(span[0], span[1])] = span[2]
     return span_dict
 
-def span_to_label(labeled_spans: Dict[Tuple[int, int], str], tokens: List[str]) -> List[str]:
+
+def span_to_label(
+    labeled_spans: Dict[Tuple[int, int], str], tokens: List[str]
+) -> List[str]:
     """
     Convert entity spans to labels
 
@@ -35,7 +42,9 @@ def span_to_label(labeled_spans: Dict[Tuple[int, int], str], tokens: List[str]) 
     a list of string labels
     """
     if labeled_spans:
-        assert list(labeled_spans.keys())[-1][1] <= len(tokens), ValueError("label spans out of scope!")
+        assert list(labeled_spans.keys())[-1][1] <= len(tokens), ValueError(
+            "label spans out of scope!"
+        )
 
     labels = ["O"] * len(tokens)
     for (start, end), label in labeled_spans.items():
@@ -64,6 +73,7 @@ def pack_instances(**kwargs) -> list[dict]:
         instance_list.append(inst)
 
     return instance_list
+
 
 def unpack_instances(instance_list: list[dict], attr_names: Optional[list[str]] = None):
     """

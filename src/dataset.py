@@ -12,6 +12,7 @@ MASKED_LB_ID = -100
 
 from transformers import DataCollatorForTokenClassification
 
+
 class Batch:
     """
     A batch of data instances, each is initialized with a dict with attribute names as keys
@@ -49,17 +50,24 @@ class Batch:
         return self
 
     def __len__(self):
-        return len(tuple(self._tensor_members.values())[0]) if not self.size else self.size
-    
+        return (
+            len(tuple(self._tensor_members.values())[0]) if not self.size else self.size
+        )
+
+
 class DataCollator(DataCollatorForTokenClassification):
     def __call__(self, instance_list: list[dict]):
-        tk_ids, attn_masks, lbs = unpack_instances(instance_list, ["bert_tk_ids", "bert_attn_masks", "bert_lbs"])
+        tk_ids, attn_masks, lbs = unpack_instances(
+            instance_list, ["bert_tk_ids", "bert_attn_masks", "bert_lbs"]
+        )
 
         # Update `tk_ids`, `attn_masks`, and `lbs` to match the maximum length of the batch.
         # The updated type of the three variables should be `torch.int64``.
         # Hint: some functions and variables you may want to use: `self.tokenizer.pad()`, `self.label_pad_token_id`.
 
-        padded_inputs = self.tokenizer.pad({"input_ids": tk_ids, "attention_mask": attn_masks})
+        padded_inputs = self.tokenizer.pad(
+            {"input_ids": tk_ids, "attention_mask": attn_masks}
+        )
         tk_ids = torch.tensor(padded_inputs.input_ids, dtype=torch.int64)
         attn_masks = torch.tensor(padded_inputs.attention_mask, dtype=torch.int64)
 
@@ -69,21 +77,39 @@ class DataCollator(DataCollatorForTokenClassification):
         padding_side = self.tokenizer.padding_side
         if padding_side == "right":
             lbs = torch.stack(
-                [torch.cat((lb, torch.full((max_len - len(lb),), self.label_pad_token_id)), dim=0) for lb in lbs]
+                [
+                    torch.cat(
+                        (lb, torch.full((max_len - len(lb),), self.label_pad_token_id)),
+                        dim=0,
+                    )
+                    for lb in lbs
+                ]
             )
         else:
             lbs = torch.stack(
-                [torch.cat((torch.full((max_len - len(lb),), self.label_pad_token_id), lb), dim=0) for lb in lbs]
+                [
+                    torch.cat(
+                        (torch.full((max_len - len(lb),), self.label_pad_token_id), lb),
+                        dim=0,
+                    )
+                    for lb in lbs
+                ]
             )
 
         return Batch(input_ids=tk_ids, attention_mask=attn_masks, labels=lbs)
 
+
 class Dataset(torch.utils.data.Dataset):
-    def __init__(self, logger, text: Optional[List[List[str]]] = None, lbs: Optional[List[List[str]]] = None):
+    def __init__(
+        self,
+        logger,
+        text: Optional[List[List[str]]] = None,
+        lbs: Optional[List[List[str]]] = None,
+    ):
         super().__init__()
         self._text = text
         self._lbs = lbs
-        self._logger=logger
+        self._logger = logger
         self._token_ids = None
         self._attn_masks = None
         self._bert_lbs = None
@@ -133,7 +159,10 @@ class Dataset(torch.utils.data.Dataset):
         self._text, self._lbs = load_data_from_json(file_path)
 
         self._logger.info("Encoding sequences...")
-        self.encode(config.bert_model_name_or_path, {lb: idx for idx, lb in enumerate(config.bio_label_types)})
+        self.encode(
+            config.bert_model_name_or_path,
+            {lb: idx for idx, lb in enumerate(config.bio_label_types)},
+        )
 
         self._logger.info(f"Data loaded.")
 
@@ -160,7 +189,9 @@ class Dataset(torch.utils.data.Dataset):
         self
         """
         tokenizer = AutoTokenizer.from_pretrained(tokenizer_name, add_prefix_space=True)
-        tokenized_text = tokenizer(self._text, add_special_tokens=True, is_split_into_words=True)
+        tokenized_text = tokenizer(
+            self._text, add_special_tokens=True, is_split_into_words=True
+        )
 
         self._token_ids = tokenized_text.input_ids
         self._attn_masks = tokenized_text.attention_mask
@@ -177,7 +208,9 @@ class Dataset(torch.utils.data.Dataset):
 
             word_ids_shifted_left = np.asarray([-100] + word_ids[:-1])
             word_ids = np.asarray(word_ids)
-            is_first_wordpiece = (word_ids_shifted_left != word_ids) & (word_ids != None)
+            is_first_wordpiece = (word_ids_shifted_left != word_ids) & (
+                word_ids != None
+            )
 
             bert_lbs = torch.full((len(bert_tk_idx_list),), -100)
             bert_lbs[is_first_wordpiece] = torch.tensor([lb2idx[lb] for lb in lbs])
