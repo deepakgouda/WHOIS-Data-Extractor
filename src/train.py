@@ -215,7 +215,7 @@ class Trainer:
             self._logger.info("Model buffer is updated!")
 
         self._checkpoint_container.save(
-            osp.join(self._config.model_dir, "checkpoint.pt")
+            osp.join(self._config.model_dir, f"{self._config.bert_model_name_or_path}.pt")
         )
         return None
 
