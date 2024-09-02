@@ -221,13 +221,12 @@ class Trainer:
         )
         return None
 
-    def evaluate(self, dataset, detailed=False):
+    def predict(self, dataset):
         self._model.to(self._device)
         self._model.eval()
         data_loader = self.get_dataloader(dataset)
 
         pred_lbs: list[list[str]] = None
-
         # Predicted labels for each sample in the dataset and stored in `pred_lbs`, a list of list of strings.
         # The string elements represent the enitity labels, such as "O" or "B-PER".
         pred_lbs = list()
@@ -245,7 +244,10 @@ class Trainer:
                     for lbs, pred in zip(batch.labels.cpu(), pred_ids)
                 ]
                 pred_lbs += pred_lb_batch
+        return pred_lbs
 
+    def evaluate(self, dataset, detailed=False):
+        pred_lbs = self.predict(dataset)
         metric = get_ner_metrics(dataset.lbs, pred_lbs, detailed=detailed)
         return metric
 
