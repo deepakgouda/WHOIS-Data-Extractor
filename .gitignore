@@ -161,6 +161,7 @@ cython_debug/
 #  option (not recommended) you can uncomment the following to ignore the entire idea folder.
 #.idea/
 
+whois-data/
 data/train.json
 data/test.json
 data/valid.json
