@@ -56,6 +56,20 @@ def main():
         if d1 != d2:
             print(indx)
 
+    inference_dataset = Dataset(logger=logger).prepare(
+        config=config, partition="inference"
+    )
+    dataset = inference_dataset
+    pred_lbs = trainer.predict(dataset=dataset)
+
+    for indx in range(len(dataset)):
+        text = dataset.text[indx]
+        output = convert_labels_to_json(dataset.text[indx], pred_lbs[indx])
+        input = " ".join(text)
+        print(f"INPUT : {input}")
+        print(f"OUTPUT : {output}")
+        print("---------")
+
 
 if __name__ == "__main__":
     main()

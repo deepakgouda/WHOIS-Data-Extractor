@@ -9,6 +9,7 @@ logger.add("logs/training_{time}.log", enqueue=True)
 
 def main():
     config = Config(logger)
+    logger.info(f"Config: {config}")
 
     logger.info("Loading datasets...")
     training_dataset = Dataset(logger=logger).prepare(config=config, partition="train")

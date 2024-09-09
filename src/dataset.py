@@ -143,14 +143,14 @@ class Dataset(torch.utils.data.Dataset):
         Parameters
         ----------
         config: configurations
-        partition: dataset partition; in [train, valid, test]
+        partition: dataset partition; in [train, valid, test, inference]
 
         Returns
         -------
         self
         """
-        assert partition in ["train", "valid", "test"], ValueError(
-            f"Argument `partition` should be one of 'train', 'valid' or 'test'!"
+        assert partition in ["train", "valid", "test", "inference"], ValueError(
+            f"Argument `partition` should be one of 'train', 'valid', 'test' or 'inference!"
         )
         self._partition = partition
 
